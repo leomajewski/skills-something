@@ -1,5 +1,5 @@
 ---
-name: troubleshooting
+name: network-troubleshooting
 description: Structured method for troubleshooting infrastructure, networks and systems — initial scoping, zero assumptions, IS/IS NOT (Kepner-Tregoe), the scientific method, bottom-up OSI, 5 whys, an incident file, time-boxing and post-incident review. Use when investigating incidents, failures, outages, slowness, intermittent or unexpected behavior of a network/service/server, or whenever something is reported as "broken", "down" or "acting weird".
 ---
 

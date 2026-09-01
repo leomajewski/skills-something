@@ -74,6 +74,15 @@ Create it at the start of every active investigation (does not apply to short, l
 
 **Why:** long conversations get compacted by the context limit, and the resulting summary loses tactical detail (what was tried/discarded, the current hypothesis, commands with critical data). The file survives compaction and lets you resume without loss.
 
+**Keep it lean — replace, don't accumulate.** The file is a snapshot of the current state of the investigation, not a diary of everything ever considered. "Update at every discovery" means **rewrite the affected section**, not append a new paragraph below the old one.
+
+- **Never create chronological reasoning sections** ("Finding 2", "Turning point 3", "Current hypothesis (updated)", "Current hypothesis (revised 2x)"). There is **one** "Current hypothesis" section and it gets overwritten.
+- When a hypothesis falls, it leaves "Current hypothesis" and becomes **one line** in "Tried and discarded" (hypothesis → why it fell). All the supporting text that came with it — predictions, justification paragraphs, data that only served it — is **deleted**.
+- A fact that turned out wrong (e.g. "the format is 2000/2003", "the backup is usable") is **corrected in place**, not left with a "~~strikethrough~~" and an addendum. If the wrong path teaches something reusable, that becomes one line in "Tried and discarded" or a short note — not the full history of how the mistake was found.
+- The "Timeline" logs **actions and observed results** (terse: "ran X → got Y"), never the evolution of the reasoning.
+- Before saving an update, reread the whole file: if a section contradicts another, or two blocks discuss the same thing at different moments, consolidate now. A file that has grown past ~2 pages is probably accumulating dead ends — compact it.
+- The detail of "how we got here" lives in the conversation and in `git`/history; the file carries only what is needed to resume and to write the post-incident review.
+
 **Location:** the project's incident directory, e.g. `incidents/incident-YYYYMMDD-short-description.md`.
 
 **Template:**
@@ -98,12 +107,13 @@ When:    IS: … | IS NOT: …
 Extent:  IS: … | IS NOT: …
 
 ## Timeline
-- HH:MM — [discovery or action + observed result]
+- HH:MM — [action taken + observed result — never the evolution of the reasoning]
 
 ## Current hypothesis
+[ONE live hypothesis at a time — overwrite when it changes, don't version it]
 
 ## Tried and discarded
-- [hypothesis/action] → [why it was discarded / negative result]
+- [hypothesis/action] → [why it fell / negative result] — one line; delete the supporting text that only served the fallen hypothesis
 
 ## Next steps
 - [ ] …

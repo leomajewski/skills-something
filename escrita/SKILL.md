@@ -1,6 +1,6 @@
 ---
 name: escrita
-description: Padrão de escrita para documentação técnica, respostas e comunicação escrita — clareza, concisão, objetividade e precisão, coesão, correção, impessoalidade, completude. Usar ao escrever ou revisar qualquer texto: documentação, página de wiki, README, procedimento, resumo, e-mail, chamado, ou resposta longa.
+description: Padrão de escrita para documentação técnica, respostas e comunicação escrita — clareza, concisão, objetividade e precisão, coesão, correção, impessoalidade, completude. Usar ao escrever ou revisar qualquer texto (documentação, página de wiki, README, procedimento, resumo, e-mail, chamado, resposta longa).
 ---
 
 # Padrão de escrita

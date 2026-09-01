@@ -6,7 +6,7 @@ A collection of [Agent Skills](https://docs.claude.com/en/docs/claude-code/skill
 
 - **[network-troubleshooting](network-troubleshooting/)** — a structured method for troubleshooting infrastructure, networks and systems: initial scoping, zero assumptions, IS/IS NOT (Kepner-Tregoe), the scientific method, bottom-up OSI, 5 whys, an incident file, time-boxing and post-incident review.
 - **[cicd-pipeline](cicd-pipeline/)** — method and checklists for shipping a containerized app with GitHub Actions, Docker and Kubernetes: build once, publish a signed immutable image, promote that exact digest through gated environments to production. Covers the inventory to gather first, the dev/infra boundary, build-once/promote-by-digest, supply-chain integrity, deployment strategies, secrets, health-gated rollout, GitHub Environments approvals, and rollback.
-- **[escrita](escrita/)** *(Portuguese)* — writing standard for technical documentation, replies and written communication: concision, objectivity, precision, correctness and consistency, in an impersonal and direct voice, with a pre-delivery checklist.
+- **[writing-style](writing-style/)** — writing standard for technical documentation, replies and written communication: clarity, concision, objectivity and precision, cohesion, correctness, impersonality and completeness, with a pre-delivery review checklist.
 
 ## Installing
 

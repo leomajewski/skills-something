@@ -5,11 +5,13 @@ description: Structured method for troubleshooting infrastructure, networks and 
 
 # Structured troubleshooting
 
-An investigation flow in 5 phases: always-on master rules → opening → investigation methods → time and escalation → closeout. The Part 1 rules apply in every phase.
+An investigation flow in 5 phases: always-on master rules → opening → investigation tools → time and escalation → closeout. The Part 1 rules apply in every phase, regardless of which Part 3 tool is in use.
 
 ---
 
 # PART 1 — Master rules (always active)
+
+The first seven rules (1.1–1.7) apply to every investigation, regardless of which Part 3 tool is in use — they are not an alternative to those tools, they are the discipline underneath all of them. The last three (1.8–1.10) are the state you carry from start to finish of the investigation.
 
 ## 1.1 Zero assumptions
 
@@ -27,28 +29,7 @@ Never treat a config, value or cause as fact without confirmation from the user 
 
 **Never mix, in the same turn, a pending command and a structured question** — a pending question forces the user to cancel it before pasting free text. Priority: command > question. If both seem necessary, send only the command now and hold the judgment question for after the result.
 
-## 1.3 Troubleshooting objective — define it and keep it in sight
-
-Decide up front: **resolve the symptom**, or (when that is not yet possible) **explain the cause**. Record it in the "Objective" section of the incident file and use it as the filter for every new lead.
-
-- **Test for every new lead:** "if this hypothesis is confirmed 100%, does that explain or resolve the original symptom?" An answer of "not necessarily" or "don't know" → say so **before** investing more time, not after several rounds.
-- **Classify the lead before going deeper than 1–2 rounds:** (a) clear mechanistic link → dig in; (b) plausible but untested link → first propose the test that confirms/refutes it; (c) likely tangent → ask the user whether to open it as a separate track.
-- **Scope creep signal:** new, real findings surfacing without anyone asking "does this serve the objective?". A real finding ≠ a relevant finding.
-- The objective changes only by an explicit user decision — never by silent drift.
-
-## 1.4 Hypothesis discipline
-
-Every hypothesis makes a verifiable prediction and predicts **where and how often** the symptom should appear. Test that prediction against data already collected, not just against the case in hand.
-
-- **Mechanism ≠ correlation:** require an explicit causal chain (X causes Y, step by step), not "they seem related" or "it's the same system". Symptoms on the same component can have independent causes.
-- **The hypothesis scope must match the symptom scope:**
-  - *Under-generalization* — proposing an action for 1 instance when the data already shows several affected; the action does not cover the real scope.
-  - *Over-generalization* — explaining it as "known behavior of the component" without comparing rate/frequency against another instance of the same component. A documented precedent is a starting point, not confirmation.
-- **Apply the scope test BEFORE investing effort in a lead.** An anomaly whose maximum reach is 1 device cannot explain a symptom affecting several instances — log it as an observation (it may serve another problem) and move on, without spending a round of questions/commands on it.
-- **Before presenting a conclusion:** did I list every affected instance? does the hypothesis explain why these and not others (IS/IS NOT)? do I have real comparative data or only a single precedent? does the proposed action cover the whole scope? If it fails the test, don't discard it outright — go find the missing comparative data.
-- **A "strong" or documented hypothesis ≠ a confirmed root cause.** Fixing a config based on a plausible hypothesis is a low-risk action worth keeping, but it does not close the investigation — that continues until there is direct evidence or the user decides to stop. Beware the bias of stopping at the first satisfying explanation.
-
-## 1.5 The Questioner — continuous critical reasoning
+## 1.3 The Questioner — continuous critical reasoning
 
 Not questioning is the shortest path to the wrong diagnosis.
 
@@ -68,7 +49,47 @@ Not questioning is the shortest path to the wrong diagnosis.
 - "If this action fails, what will I learn?" — every action should produce information, not just attempt a fix.
 - "Did I ask for a command, or accept a verbal description?" — verbal descriptions are imprecise; prefer concrete output.
 
-## 1.6 Incident file — continuous logging
+## 1.4 Non-destructive investigation first
+
+Collect the full state (logs, config, processes, tasks, services) **before** any change — the troubleshooting action itself can erase the evidence of the real cause. Snapshot if possible; only then change anything.
+
+## 1.5 Reproducibility: consistent vs. intermittent
+
+- **Consistent** → investigate static config and logs.
+- **Intermittent** → passive collection before acting; do not force reproduction without understanding the trigger. Treating intermittent as consistent yields a false diagnosis.
+
+**Passive collection does not replace an active test.** "Wait for the capture/log to catch an event" is a valid next step only if there is a specific question it answers that the current data does not. Ask: "what will this capture tell me that I don't already know?" If it only re-confirms something already evidenced, it is not progress — prioritize the active test available now (baseline, a direct command).
+
+## 1.6 Collecting real data
+
+Ask for a real command whenever the state is uncertain. Ambiguous output (empty, error) does not confirm absence — it may be wrong permission/syntax/scope; try an alternative before concluding. On a remote host, prefer redirecting output to a file and reading it afterward — a direct pipe can fail silently.
+
+## 1.7 Step-by-step progression
+
+Collect state → form a hypothesis → propose a verification → act only after confirming → verify the result with a command. Never assume the action worked.
+
+## 1.8 Troubleshooting objective — define it and keep it in sight
+
+Decide up front: **resolve the symptom**, or (when that is not yet possible) **explain the cause**. Record it in the "Objective" section of the incident file and use it as the filter for every new lead.
+
+- **Test for every new lead:** "if this hypothesis is confirmed 100%, does that explain or resolve the original symptom?" An answer of "not necessarily" or "don't know" → say so **before** investing more time, not after several rounds.
+- **Classify the lead before going deeper than 1–2 rounds:** (a) clear mechanistic link → dig in; (b) plausible but untested link → first propose the test that confirms/refutes it; (c) likely tangent → ask the user whether to open it as a separate track.
+- **Scope creep signal:** new, real findings surfacing without anyone asking "does this serve the objective?". A real finding ≠ a relevant finding.
+- The objective changes only by an explicit user decision — never by silent drift.
+
+## 1.9 Hypothesis discipline
+
+Every hypothesis makes a verifiable prediction and predicts **where and how often** the symptom should appear. Test that prediction against data already collected, not just against the case in hand.
+
+- **Mechanism ≠ correlation:** require an explicit causal chain (X causes Y, step by step), not "they seem related" or "it's the same system". Symptoms on the same component can have independent causes.
+- **The hypothesis scope must match the symptom scope:**
+  - *Under-generalization* — proposing an action for 1 instance when the data already shows several affected; the action does not cover the real scope.
+  - *Over-generalization* — explaining it as "known behavior of the component" without comparing rate/frequency against another instance of the same component. A documented precedent is a starting point, not confirmation.
+- **Apply the scope test BEFORE investing effort in a lead.** An anomaly whose maximum reach is 1 device cannot explain a symptom affecting several instances — log it as an observation (it may serve another problem) and move on, without spending a round of questions/commands on it.
+- **Before presenting a conclusion:** did I list every affected instance? does the hypothesis explain why these and not others (IS/IS NOT)? do I have real comparative data or only a single precedent? does the proposed action cover the whole scope? If it fails the test, don't discard it outright — go find the missing comparative data.
+- **A "strong" or documented hypothesis ≠ a confirmed root cause.** Fixing a config based on a plausible hypothesis is a low-risk action worth keeping, but it does not close the investigation — that continues until there is direct evidence or the user decides to stop. Beware the bias of stopping at the first satisfying explanation.
+
+## 1.10 Incident file — continuous logging
 
 Create it at the start of every active investigation (does not apply to short, linear tasks such as migration/provisioning) and update it **at every discovery**, not only at the end.
 
@@ -125,7 +146,7 @@ Extent:  IS: … | IS NOT: …
 **Preventive actions:**
 ```
 
-For network/connectivity problems, include an "OSI coverage" section (see 3.3). At the end, the completed file is the direct basis for the post-incident review (5.2).
+For network/connectivity problems, include an "OSI coverage" section (see 3.2). At the end, the completed file is the direct basis for the post-incident review (5.2).
 
 ---
 
@@ -173,17 +194,25 @@ The "IS NOT" columns eliminate hypotheses without testing — the IS/IS NOT diff
 
 ---
 
-# PART 3 — Investigation methods
+# PART 3 — Investigation tools
 
-## 3.1 The scientific method
+The tools below act as the hypothesize → predict → test step of the scientific method: observe → hypothesize → predict ("if X, command Y should return Z") → test → conclude; never jump from observation straight to the corrective action. They are not mutually exclusive alternatives — which one to use depends on the shape of the problem, and more than one can apply to the same case.
 
-Observe → hypothesize → predict ("if X, command Y should return Z") → test → conclude. Never jump from observation straight to the corrective action.
+**Quick triage:**
 
-## 3.2 Divide and conquer
+| Symptom looks like... | Tool |
+|---|---|
+| Networking, VoIP, directory auth, system-to-system communication | Bottom-up OSI model (3.2) |
+| N instances affected, unsure if it's universal or local-state-dependent | Divide and conquer (3.1) |
+| Technical mechanism already clear, still need the process/system-level cause | Five whys (3.3) |
+| A known-good instance or version exists to compare against | Known-good baseline (3.4) |
+| Don't even know where to start | IS/IS NOT (2.5) first, then pick from above |
+
+## 3.1 Divide and conquer
 
 Test at the midpoint between "works" and "fails", halving the possibility space each round, until you isolate the minimal component. E.g. N machines affected → test 1 first to learn whether it is universal or dependent on local state, before scaling the test.
 
-## 3.3 The OSI model — bottom-up (connectivity)
+## 3.2 The OSI model — bottom-up (connectivity)
 
 For networking, VoIP, directory authentication or system-to-system communication, work bottom-up — do not start at the application:
 
@@ -207,38 +236,19 @@ L1/L2 switch — clean (0 errors). L1 AP radio — RSSI/SNR good.
 L3/L4 firewall — NAT ok, ALG ok, UDP timeout fixed. L7 app — configs correct.
 ```
 
-## 3.4 Five whys (RCA)
+## 3.3 Five whys (RCA)
 
 Ask "why" until the root cause; do not stop at the immediate symptom — but each "why" needs real evidence (log, config, command) before it becomes the basis for the next one, not a chained assumption. Without that, five whys is just five stacked guesses, violating 1.1.
 
 - **It isn't always a single chain.** An answer can have more than one plausible cause — branch (investigate both arms) instead of picking one path off the top of your head and dropping the other without checking.
-- **"Five" is a convention, not a target.** Stop when the cause becomes something actionable and within the control of whoever will fix it (a process, a config, a missing validation) — that can take 3 questions or 8. Counting on to 5 after you already have the root cause is noise; stopping at 2 because it "already makes sense" is the bias from 1.4 (stopping at the first satisfying explanation).
+- **"Five" is a convention, not a target.** Stop when the cause becomes something actionable and within the control of whoever will fix it (a process, a config, a missing validation) — that can take 3 questions or 8. Counting on to 5 after you already have the root cause is noise; stopping at 2 because it "already makes sense" is the bias from 1.9 (stopping at the first satisfying explanation).
 - **Root cause ≠ immediate cause.** The last answer tends to point at a process or system ("missing validation X"), not a one-off event ("the file was moved") — a one-off event almost always still has a why behind it (why did moving the file break something without anyone noticing?).
 
-Example: service won't start → config not found → path points to the old directory → deploy did not update the reference → deploy does not validate paths after moving a file → **root cause:** the deploy process lacks an integrity check. Fixing only the symptom leaves the root cause intact — it returns on the next update. This chain, with the evidence for each step, is the direct basis for the incident file's "Resolution" section (1.6) and the PIR (5.2).
+Example: service won't start → config not found → path points to the old directory → deploy did not update the reference → deploy does not validate paths after moving a file → **root cause:** the deploy process lacks an integrity check. Fixing only the symptom leaves the root cause intact — it returns on the next update. This chain, with the evidence for each step, is the direct basis for the incident file's "Resolution" section (1.10) and the PIR (5.2).
 
-## 3.5 Non-destructive investigation first
-
-Collect the full state (logs, config, processes, tasks, services) **before** any change — the troubleshooting action itself can erase the evidence of the real cause. Snapshot if possible; only then change anything.
-
-## 3.6 Compare against a known-good baseline
+## 3.4 Compare against a known-good baseline
 
 Compare config/state against a known-good instance or the last working state (version, config, services, env vars, policies). Caution: the same declared config ≠ the same real state — there can be drift or a prior manual intervention.
-
-## 3.7 Reproducibility
-
-- **Consistent** → investigate static config and logs.
-- **Intermittent** → passive collection before acting; do not force reproduction without understanding the trigger. Treating intermittent as consistent yields a false diagnosis.
-
-**Passive collection does not replace an active test.** "Wait for the capture/log to catch an event" is a valid next step only if there is a specific question it answers that the current data does not. Ask: "what will this capture tell me that I don't already know?" If it only re-confirms something already evidenced, it is not progress — prioritize the active test available now (baseline, a direct command).
-
-## 3.8 Collecting real data
-
-Ask for a real command whenever the state is uncertain. Ambiguous output (empty, error) does not confirm absence — it may be wrong permission/syntax/scope; try an alternative before concluding. On a remote host, prefer redirecting output to a file and reading it afterward — a direct pipe can fail silently.
-
-## 3.9 Step-by-step progression
-
-Collect state → form a hypothesis → propose a verification → act only after confirming → verify the result with a command. Never assume the action worked.
 
 ---
 

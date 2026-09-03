@@ -209,7 +209,13 @@ L3/L4 firewall — NAT ok, ALG ok, UDP timeout fixed. L7 app — configs correct
 
 ## 3.4 Five whys (RCA)
 
-Ask "why" until the root cause; do not stop at the immediate symptom. E.g. service won't start → config not found → path points to the old directory → deploy did not update the reference → deploy does not validate paths after moving a file → **root cause:** the deploy process lacks an integrity check. Fixing only the symptom leaves the root cause intact — it returns on the next update.
+Ask "why" until the root cause; do not stop at the immediate symptom — but each "why" needs real evidence (log, config, command) before it becomes the basis for the next one, not a chained assumption. Without that, five whys is just five stacked guesses, violating 1.1.
+
+- **It isn't always a single chain.** An answer can have more than one plausible cause — branch (investigate both arms) instead of picking one path off the top of your head and dropping the other without checking.
+- **"Five" is a convention, not a target.** Stop when the cause becomes something actionable and within the control of whoever will fix it (a process, a config, a missing validation) — that can take 3 questions or 8. Counting on to 5 after you already have the root cause is noise; stopping at 2 because it "already makes sense" is the bias from 1.4 (stopping at the first satisfying explanation).
+- **Root cause ≠ immediate cause.** The last answer tends to point at a process or system ("missing validation X"), not a one-off event ("the file was moved") — a one-off event almost always still has a why behind it (why did moving the file break something without anyone noticing?).
+
+Example: service won't start → config not found → path points to the old directory → deploy did not update the reference → deploy does not validate paths after moving a file → **root cause:** the deploy process lacks an integrity check. Fixing only the symptom leaves the root cause intact — it returns on the next update. This chain, with the evidence for each step, is the direct basis for the incident file's "Resolution" section (1.6) and the PIR (5.2).
 
 ## 3.5 Non-destructive investigation first
 
